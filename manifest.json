@@ -1,0 +1,10 @@
+{
+	"id": "obsidian-minimal-custom-plugin",
+	"name": "Minimal Theme Custom",
+	"version": "1.0.1",
+	"minAppVersion": "0.12.0",
+	"description": "自定义 minimal theme 的样式",
+	"author": "Yong",
+	"authorUrl": "https://github.com/Yong011021/obsidian-minimal-theme-custom",
+	"isDesktopOnly": false
+}
