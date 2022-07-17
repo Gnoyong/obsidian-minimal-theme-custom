@@ -220,7 +220,7 @@ class SampleSettingTab extends PluginSettingTab {
 				}));
 
 		new Setting(containerEl)
-			.setName('显示类型')
+			.setName('显示语言类型')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.blockquoteLang)
 				.onChange(async (value) => {
