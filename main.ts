@@ -29,6 +29,7 @@ export default class MyPlugin extends Plugin {
 
 	async onload() {
 		await this.loadSettings();
+		this.updateStyle();
 
 		// This creates an icon in the left ribbon.
 		const ribbonIconEl = this.addRibbonIcon('dice', 'Sample Plugin', (evt: MouseEvent) => {
@@ -93,7 +94,6 @@ export default class MyPlugin extends Plugin {
 	}
 
 	onunload() {
-
 	}
 
 	async loadSettings() {
@@ -185,6 +185,8 @@ class SampleSettingTab extends PluginSettingTab {
 					this.plugin.updateStyle();
 				}));
 
+		containerEl.createEl('h3', { text: 'Blockquote' })
+
 		new Setting(containerEl)
 			.setName('引用块')
 			.addDropdown(dropdown => dropdown
@@ -196,7 +198,7 @@ class SampleSettingTab extends PluginSettingTab {
 					this.plugin.updateStyle();
 				}));
 
-		containerEl.createEl('h3', { text: 'Blockquote' })
+		containerEl.createEl('h3', { text: 'Code' })
 
 		new Setting(containerEl)
 			.setName('控制台样式')
