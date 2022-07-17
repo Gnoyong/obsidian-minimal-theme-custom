@@ -9,6 +9,8 @@ interface MyPluginSettings {
 	embed: string;
 	tag: string;
 	blockquote: string;
+	noWordWrap: boolean;
+	blockquoteLang: boolean;
 }
 
 const DEFAULT_SETTINGS: MyPluginSettings = {
@@ -18,6 +20,8 @@ const DEFAULT_SETTINGS: MyPluginSettings = {
 	embed: "0",
 	tag: "0",
 	blockquote: "0",
+	noWordWrap: false,
+	blockquoteLang: false,
 }
 
 export default class MyPlugin extends Plugin {
@@ -111,6 +115,9 @@ export default class MyPlugin extends Plugin {
 		document.body.classList.toggle('mtc-embed-' + this.settings.embed, this.settings.embed != "0");
 		document.body.classList.toggle('mtc-tag-' + this.settings.tag, this.settings.tag != "0");
 		document.body.classList.toggle('mtc-blockquote-' + this.settings.blockquote, this.settings.blockquote != "0");
+		document.body.classList.toggle('mtc-nowordwrap', this.settings.noWordWrap);
+		document.body.classList.toggle('mtc-blockquote-language', this.settings.blockquoteLang);
+
 	}
 }
 
@@ -144,16 +151,6 @@ class SampleSettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		// containerEl.createEl('h2', { text: 'Minimal Theme Custom' });
-		new Setting(containerEl)
-			.setName('控制台样式')
-			.setDesc('开启 bash 代码块的控制台样式，只在浅色模式下生效')
-			.addToggle(toggle => toggle
-				.setValue(this.plugin.settings.terminal)
-				.onChange(async (value) => {
-					this.plugin.settings.terminal = value;
-					this.plugin.updateStyle();
-					await this.plugin.saveSettings();
-				}));
 
 		new Setting(containerEl)
 			.setName('蓝底白字选取样式')
@@ -197,6 +194,39 @@ class SampleSettingTab extends PluginSettingTab {
 					this.plugin.settings.blockquote = value;
 					await this.plugin.saveSettings();
 					this.plugin.updateStyle();
+				}));
+
+		containerEl.createEl('h3', { text: 'Blockquote' })
+
+		new Setting(containerEl)
+			.setName('控制台样式')
+			.setDesc('开启 bash 代码块的控制台样式，只在浅色模式下生效')
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.terminal)
+				.onChange(async (value) => {
+					this.plugin.settings.terminal = value;
+					this.plugin.updateStyle();
+					await this.plugin.saveSettings();
+				}));
+
+		new Setting(containerEl)
+			.setName('关闭代码块自动换行')
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.noWordWrap)
+				.onChange(async (value) => {
+					this.plugin.settings.noWordWrap = value;
+					this.plugin.updateStyle();
+					await this.plugin.saveSettings();
+				}));
+
+		new Setting(containerEl)
+			.setName('显示类型')
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.blockquoteLang)
+				.onChange(async (value) => {
+					this.plugin.settings.blockquoteLang = value;
+					this.plugin.updateStyle();
+					await this.plugin.saveSettings();
 				}));
 	}
 }
