@@ -6,12 +6,18 @@ interface MyPluginSettings {
 	mySetting: string;
 	terminal: boolean;
 	selection: boolean;
+	embed: string;
+	tag: string;
+	blockquote: string;
 }
 
 const DEFAULT_SETTINGS: MyPluginSettings = {
 	mySetting: 'default',
 	terminal: false,
 	selection: false,
+	embed: "0",
+	tag: "0",
+	blockquote: "0",
 }
 
 export default class MyPlugin extends Plugin {
@@ -93,6 +99,19 @@ export default class MyPlugin extends Plugin {
 	async saveSettings() {
 		await this.saveData(this.settings);
 	}
+
+	updateStyle() {
+		document.body.removeClasses(["mtc-embed-1"]);
+		document.body.removeClasses(["mtc-tag-1"]);
+		document.body.removeClasses(["mtc-blockquote-1"]);
+
+
+		document.body.classList.toggle('mtc-code-terminal', this.settings.terminal);
+		document.body.classList.toggle('mtc-selection-1', this.settings.selection);
+		document.body.classList.toggle('mtc-embed-' + this.settings.embed, this.settings.embed != "0");
+		document.body.classList.toggle('mtc-tag-' + this.settings.tag, this.settings.tag != "0");
+		document.body.classList.toggle('mtc-blockquote-' + this.settings.blockquote, this.settings.blockquote != "0");
+	}
 }
 
 class SampleModal extends Modal {
@@ -127,12 +146,12 @@ class SampleSettingTab extends PluginSettingTab {
 		// containerEl.createEl('h2', { text: 'Minimal Theme Custom' });
 		new Setting(containerEl)
 			.setName('控制台样式')
-			.setDesc('开启 bash 代码块的控制台样式')
+			.setDesc('开启 bash 代码块的控制台样式，只在浅色模式下生效')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.terminal)
 				.onChange(async (value) => {
 					this.plugin.settings.terminal = value;
-					document.body.classList.toggle('mtc-code-terminal', this.plugin.settings.terminal);
+					this.plugin.updateStyle();
 					await this.plugin.saveSettings();
 				}));
 
@@ -143,9 +162,41 @@ class SampleSettingTab extends PluginSettingTab {
 				.setValue(this.plugin.settings.selection)
 				.onChange(async (value) => {
 					this.plugin.settings.selection = value;
-					document.body.classList.toggle('mtc-selection', this.plugin.settings.selection);
 					await this.plugin.saveSettings();
+					this.plugin.updateStyle();
 				}));
 
+		new Setting(containerEl)
+			.setName('embed')
+			.addDropdown(dropdown => dropdown
+				.addOptions({ "0": "默认", "1": "蓝色虚线边框" })
+				.setValue(this.plugin.settings.embed)
+				.onChange(async (value) => {
+					this.plugin.settings.embed = value;
+					await this.plugin.saveSettings();
+					this.plugin.updateStyle();
+				}));
+
+		new Setting(containerEl)
+			.setName('标签')
+			.addDropdown(dropdown => dropdown
+				.addOptions({ "0": "默认", "1": "Github" })
+				.setValue(this.plugin.settings.tag)
+				.onChange(async (value) => {
+					this.plugin.settings.tag = value;
+					await this.plugin.saveSettings();
+					this.plugin.updateStyle();
+				}));
+
+		new Setting(containerEl)
+			.setName('引用块')
+			.addDropdown(dropdown => dropdown
+				.addOptions({ "0": "默认", "1": "样式一" })
+				.setValue(this.plugin.settings.blockquote)
+				.onChange(async (value) => {
+					this.plugin.settings.blockquote = value;
+					await this.plugin.saveSettings();
+					this.plugin.updateStyle();
+				}));
 	}
 }
