@@ -11,6 +11,8 @@ interface MyPluginSettings {
 	blockquote: string;
 	noWordWrap: boolean;
 	blockquoteLang: boolean;
+	calloutStyle: string;
+	calloutNicerColor: boolean;
 }
 
 const DEFAULT_SETTINGS: MyPluginSettings = {
@@ -22,6 +24,8 @@ const DEFAULT_SETTINGS: MyPluginSettings = {
 	blockquote: "0",
 	noWordWrap: false,
 	blockquoteLang: false,
+	calloutStyle: '0',
+	calloutNicerColor: false,
 }
 
 export default class MyPlugin extends Plugin {
@@ -108,7 +112,7 @@ export default class MyPlugin extends Plugin {
 		document.body.removeClasses(["mtc-embed-1"]);
 		document.body.removeClasses(["mtc-tag-1"]);
 		document.body.removeClasses(["mtc-blockquote-1"]);
-
+		document.body.removeClasses(["mtc-callout-1"]);
 
 		document.body.classList.toggle('mtc-code-terminal', this.settings.terminal);
 		document.body.classList.toggle('mtc-selection-1', this.settings.selection);
@@ -117,7 +121,8 @@ export default class MyPlugin extends Plugin {
 		document.body.classList.toggle('mtc-blockquote-' + this.settings.blockquote, this.settings.blockquote != "0");
 		document.body.classList.toggle('mtc-nowordwrap', this.settings.noWordWrap);
 		document.body.classList.toggle('mtc-blockquote-language', this.settings.blockquoteLang);
-
+		document.body.classList.toggle('mtc-callout-' + this.settings.calloutStyle, this.settings.calloutStyle != "0");
+		document.body.classList.toggle('mtc-callout-nicer-color', this.settings.calloutNicerColor);
 	}
 }
 
@@ -164,9 +169,9 @@ class SampleSettingTab extends PluginSettingTab {
 				}));
 
 		new Setting(containerEl)
-			.setName('embed')
+			.setName('Embed style')
 			.addDropdown(dropdown => dropdown
-				.addOptions({ "0": "默认", "1": "蓝色虚线边框" })
+				.addOptions({ "0": "Default", "1": "Style 1" })
 				.setValue(this.plugin.settings.embed)
 				.onChange(async (value) => {
 					this.plugin.settings.embed = value;
@@ -175,9 +180,9 @@ class SampleSettingTab extends PluginSettingTab {
 				}));
 
 		new Setting(containerEl)
-			.setName('标签')
+			.setName('Tag style')
 			.addDropdown(dropdown => dropdown
-				.addOptions({ "0": "默认", "1": "Github" })
+				.addOptions({ "0": "Default", "1": "Github" })
 				.setValue(this.plugin.settings.tag)
 				.onChange(async (value) => {
 					this.plugin.settings.tag = value;
@@ -185,12 +190,12 @@ class SampleSettingTab extends PluginSettingTab {
 					this.plugin.updateStyle();
 				}));
 
-		containerEl.createEl('h3', { text: 'Blockquote' })
+		containerEl.createEl('h3', { text: 'Blockquote' });
 
 		new Setting(containerEl)
-			.setName('引用块')
+			.setName('Blockquote style')
 			.addDropdown(dropdown => dropdown
-				.addOptions({ "0": "默认", "1": "样式一" })
+				.addOptions({ "0": "Default", "1": "Style 1" })
 				.setValue(this.plugin.settings.blockquote)
 				.onChange(async (value) => {
 					this.plugin.settings.blockquote = value;
@@ -198,7 +203,7 @@ class SampleSettingTab extends PluginSettingTab {
 					this.plugin.updateStyle();
 				}));
 
-		containerEl.createEl('h3', { text: 'Code' })
+		containerEl.createEl('h3', { text: 'Code' });
 
 		new Setting(containerEl)
 			.setName('控制台样式')
@@ -230,5 +235,32 @@ class SampleSettingTab extends PluginSettingTab {
 					this.plugin.updateStyle();
 					await this.plugin.saveSettings();
 				}));
+
+		containerEl.createEl('h3', { text: 'Callout' });
+
+		new Setting(containerEl)
+			.setName('Callout style')
+			.addDropdown(dropdown => dropdown
+				.addOptions({
+					"0": "Default",
+					"1": "Style 1",
+				})
+				.setValue(this.plugin.settings.calloutStyle)
+				.onChange(async (value) => {
+					this.plugin.settings.calloutStyle = value;
+					this.plugin.updateStyle();
+					await this.plugin.saveSettings();
+				}));
+
+		new Setting(containerEl)
+			.setName('字体颜色优化')
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.calloutNicerColor)
+				.onChange(async (value) => {
+					this.plugin.settings.calloutNicerColor = value;
+					this.plugin.updateStyle();
+					await this.plugin.saveSettings();
+				}));
+
 	}
 }
